@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Notes - O Melhor Site de Anotações</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #6a4cff;
+            --primary-dark: #5439e0;
+            --secondary: #ff6b8b;
+            --dark: #1a1a2e;
+            --darker: #0d0d1a;
+            --light: #f8f9ff;
+            --gray: #a0a0c0;
+            --success: #4ade80;
+            --warning: #facc15;
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 10% 20%, rgba(106, 76, 255, 0.1) 0%, rgba(0, 0, 0, 0) 30%),
+                        radial-gradient(circle at 90% 80%, rgba(255, 107, 139, 0.1) 0%, rgba(0, 0, 0, 0) 30%);
+            z-index: -1;
+        }
+
+        /* Layout principal */
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+        }
+
+        .logo::after {
+            content: "PRO";
+            position: absolute;
+            top: -10px;
+            right: -35px;
+            font-size: 0.9rem;
+            background: var(--secondary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--light);
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn:hover {
+            background: rgba(106, 76, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            background: var(--glass);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            height: fit-content;
+        }
+
+        .sidebar-title {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--gray);
+        }
+
+        .categories {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .category {
+            padding: 14px 18px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .category:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .category.active {
+            background: rgba(106, 76, 255, 0.2);
+            color: var(--primary);
+        }
+
+        .category i {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Notes Section */
+        .notes-section {
+            background: var(--glass);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .search-bar {
+            position: relative;
+            width: 300px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 14px 20px 14px 45px;
+            color: var(--light);
+            font-size: 1rem;
+        }
+
+        .search-bar i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+
+        /* Notes Grid */
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .note-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .note-card:hover {
+            transform: translateY(-5px);
+            background: rgba(106, 76, 255, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .note-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--primary);
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .note-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .note-date {
+            color: var(--gray);
+            font-size: 0.9rem;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .note-content {
+            color: var(--gray);
+            line-height: 1.6;
+            margin-bottom: 20px;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            max-height: 4.8em;
+        }
+
+        .note-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .note-tags {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tag {
+            background: rgba(106, 76, 255, 0.15);
+            color: var(--primary);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .note-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.08);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            transform: scale(1.1);
+        }
+
+        /* Editor Modal */
+        .editor-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(13, 13, 26, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .editor-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .editor-container {
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            background: linear-gradient(145deg, #1e1e3a, #1a1a2e);
+            border-radius: 25px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(106, 76, 255, 0.3);
+        }
+
+        .editor-header {
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(26, 26, 46, 0.7);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .editor-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .editor-body {
+            padding: 30px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .editor-group {
+            margin-bottom: 25px;
+        }
+
+        .editor-label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .title-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 16px 20px;
+            color: var(--light);
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .content-textarea {
+            width: 100%;
+            min-height: 300px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            color: var(--light);
+            font-size: 1rem;
+            line-height: 1.6;
+            resize: vertical;
+        }
+
+        .editor-footer {
+            padding: 20px 30px;
+            background: rgba(26, 26, 46, 0.7);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .tag-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 12px 20px;
+            color: var(--light);
+            width: 250px;
+        }
+
+        /* Animation */
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        /* Responsividade */
+        @media (max-width: 1100px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .user-actions {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            
+            .search-bar {
+                width: 100%;
+            }
+            
+            .notes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">SuperNotes</div>
+            <div class="user-actions">
+                <button class="btn">
+                    <i class="fas fa-user"></i> Minha Conta
+                </button>
+                <button class="btn btn-primary" id="newNoteBtn">
+                    <i class="fas fa-plus"></i> Nova Anotação
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <h3 class="sidebar-title"><i class="fas fa-folder"></i> Categorias</h3>
+                <div class="categories">
+                    <div class="category active">
+                        <i class="fas fa-inbox"></i>
+                        <span>Todas as Anotações</span>
+                        <span class="badge">12</span>
+                    </div>
+                    <div class="category">
+                        <i class="fas fa-star"></i>
+                        <span>Favoritas</span>
+                    </div>
+                    <div class="category">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Trabalho</span>
+                    </div>
+                    <div class="category">
+                        <i class="fas fa-graduation-cap"></i>
+                        <span>Estudos</span>
+                    </div>
+                    <div class="category">
+                        <i class="fas fa-heart"></i>
+                        <span>Pessoal</span>
+                    </div>
+                    <div class="category">
+                        <i class="fas fa-lightbulb"></i>
+                        <span>Ideias</span>
+                    </div>
+                    <div class="category">
+                        <i class="fas fa-archive"></i>
+                        <span>Arquivadas</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Notes Section -->
+            <main class="notes-section">
+                <div class="section-header">
+                    <h2 class="section-title">Minhas Anotações</h2>
+                    <div class="search-bar">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Pesquisar anotações...">
+                    </div>
+                </div>
+
+                <div class="notes-grid">
+                    <!-- Note 1 -->
+                    <div class="note-card">
+                        <div class="note-header">
+                            <div class="note-title">Ideias para projeto</div>
+                            <div class="note-date">12/06/2023</div>
+                        </div>
+                        <div class="note-content">
+                            Desenvolver um sistema de organização pessoal com integração de calendário e tarefas. Incluir modo escuro e claro, sincronização em nuvem, e suporte para vários dispositivos.
+                        </div>
+                        <div class="note-footer">
+                            <div class="note-tags">
+                                <span class="tag">Trabalho</span>
+                                <span class="tag">Ideias</span>
+                            </div>
+                            <div class="note-actions">
+                                <div class="action-btn"><i class="fas fa-star"></i></div>
+                                <div class="action-btn"><i class="fas fa-edit"></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Note 2 -->
+                    <div class="note-card">
+                        <div class="note-header">
+                            <div class="note-title">Lista de compras</div>
+                            <div class="note-date">10/06/2023</div>
+                        </div>
+                        <div class="note-content">
+                            - Frutas: maçã, banana, morango
+                            - Verduras: alface, brócolis, cenoura
+                            - Laticínios: leite, queijo, iogurte
+                            - Padaria: pão integral, biscoito
+                        </div>
+                        <div class="note-footer">
+                            <div class="note-tags">
+                                <span class="tag">Casa</span>
+                            </div>
+                            <div class="note-actions">
+                                <div class="action-btn"><i class="fas fa-star"></i></div>
+                                <div class="action-btn"><i class="fas fa-edit"></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Note 3 -->
+                    <div class="note-card">
+                        <div class="note-header">
+                            <div class="note-title">Dicas de programação</div>
+                            <div class="note-date">08/06/2023</div>
+                        </div>
+                        <div class="note-content">
+                            Sempre validar entradas do usuário. Usar async/await para operações assíncronas. Manter o código modularizado. Documentar funções complexas. Fazer testes unitários para funções críticas.
+                        </div>
+                        <div class="note-footer">
+                            <div class="note-tags">
+                                <span class="tag">Estudos</span>
+                                <span class="tag">Programação</span>
+                            </div>
+                            <div class="note-actions">
+                                <div class="action-btn"><i class="fas fa-star"></i></div>
+                                <div class="action-btn"><i class="fas fa-edit"></i></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Note 4 -->
+                    <div class="note-card">
+                        <div class="note-header">
+                            <div class="note-title">Metas para 2023</div>
+                            <div class="note-date">01/06/2023</div>
+                        </div>
+                        <div class="note-content">
+                            - Aprender uma nova linguagem de programação
+                            - Fazer curso de UX/UI Design
+                            - Ler 20 livros
+                            - Fazer exercícios 3x por semana
+                            - Viajar para 2 países novos
+                        </div>
+                        <div class="note-footer">
+                            <div class="note-tags">
+                                <span class="tag">Pessoal</span>
+                                <span class="tag">Metas</span>
+                            </div>
+                            <div class="note-actions">
+                                <div class="action-btn"><i class="fas fa-star"></i></div>
+                                <div class="action-btn"><i class="fas fa-edit"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Editor Modal -->
+    <div class="editor-modal" id="editorModal">
+        <div class="editor-container">
+            <div class="editor-header">
+                <div class="editor-title">Nova Anotação</div>
+                <div class="editor-actions">
+                    <button class="btn">
+                        <i class="fas fa-image"></i> Adicionar Imagem
+                    </button>
+                    <button class="btn">
+                        <i class="fas fa-palette"></i> Personalizar
+                    </button>
+                </div>
+            </div>
+            
+            <div class="editor-body">
+                <div class="editor-group">
+                    <label class="editor-label">Título</label>
+                    <input type="text" class="title-input" placeholder="Digite o título da sua anotação">
+                </div>
+                
+                <div class="editor-group">
+                    <label class="editor-label">Conteúdo</label>
+                    <textarea class="content-textarea" placeholder="Digite o conteúdo da sua anotação..."></textarea>
+                </div>
+            </div>
+            
+            <div class="editor-footer">
+                <input type="text" class="tag-input" placeholder="Adicionar tag...">
+                
+                <div class="user-actions">
+                    <button class="btn" id="cancelBtn">
+                        Cancelar
+                    </button>
+                    <button class="btn btn-primary" id="saveBtn">
+                        <i class="fas fa-save"></i> Salvar Anotação
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Elementos DOM
+        const newNoteBtn = document.getElementById('newNoteBtn');
+        const editorModal = document.getElementById('editorModal');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const saveBtn = document.getElementById('saveBtn');
+        
+        // Abrir editor
+        newNoteBtn.addEventListener('click', () => {
+            editorModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        });
+        
+        // Fechar editor
+        cancelBtn.addEventListener('click', () => {
+            editorModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        });
+        
+        // Salvar anotação
+        saveBtn.addEventListener('click', () => {
+            editorModal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            
+            // Simular salvamento e atualização da lista
+            setTimeout(() => {
+                alert('Anotação salva com sucesso! A lista será atualizada.');
+            }, 300);
+        });
+        
+        // Fechar ao clicar fora do editor
+        editorModal.addEventListener('click', (e) => {
+            if (e.target === editorModal) {
+                editorModal.classList.remove('active');
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Animação de flutuação para os cards
+        document.querySelectorAll('.note-card').forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.classList.add('floating');
+        });
+        
+        // Simular interação com as notas
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const icon = this.querySelector('i');
+                
+                if (icon.classList.contains('fa-star')) {
+                    if (icon.classList.contains('active')) {
+                        icon.classList.remove('active');
+                        this.style.background = 'rgba(255, 255, 255, 0.08)';
+                    } else {
+                        icon.classList.add('active');
+                        this.style.background = 'var(--warning)';
+                    }
+                }
+            });
+        });
+        
+        // Abrir editor ao clicar em uma nota existente
+        document.querySelectorAll('.note-card').forEach(card => {
+            card.addEventListener('click', () => {
+                editorModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            });
+        });
+    </script>
+</body>
+</html>
